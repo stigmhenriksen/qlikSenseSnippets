@@ -1,0 +1,29 @@
+// - increnemnetal load of data from BigQuery
+let myMonth=1;
+//let myWeek=1;
+//let myYear=2014;
+
+let myWeek=4;
+let myYear=2016;
+
+// do the loop unitl the whole year have been read
+// load from big Query - incremental approach - one week each time
+
+Do while (myYear < 2017)
+   let myPeriode = $(myWeek) & $(myYear);
+  Incremental_Load$(myPeriode):
+    LOAD *;
+   	SQL SELECT *
+   FROM "teststig-1247".myPos."W_SALES_F" WHERE YEAR= $(myYear) AND WEEK = $(myWeek);
+   
+   let myWeek = myWeek +1;
+  // check if new year then start on a new week
+   if $(myWeek) > 52 then
+    let  myWeek=1;
+    let  myYear = myYear + 1;
+   endif;
+    let fileNameTo = 'E:\work\WUnderArbeid\CircleK\Incremental_Load' & $(myPeriode);
+    let fileNameFrom = 'Incremental_Load' & $(myPeriode);
+    Store  $(fileNameFrom) into $(fileNameTo).qvd(qvd);
+    drop table $(fileNameFrom);
+LOOP;
